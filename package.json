@@ -1,0 +1,20 @@
+{
+  "name": "uptime-headge",
+  "version": "1.0.0",
+  "description": "Hedging the uptime",
+  "main": "start.js",
+  "repository": "github:tarmo888/uptime-hedge",
+  "author": "g48-team",
+  "dependencies": {
+    "headless-obyte": "git+https://github.com/byteball/headless-obyte.git#aa",
+    "koa": "2.6.1",
+    "koa-body": "4.0.4",
+    "koa-ejs": "4.1.2",
+    "koa-flash-message": "0.1.6",
+    "koa-mount": "4.0.0",
+    "koa-session": "5.12.3",
+    "koa-static": "5.0.0",
+    "moment": "2.24.0",
+    "ocore": "git+https://github.com/byteball/ocore.git#rocks-and-formulas"
+  }
+}

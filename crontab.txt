@@ -1,0 +1,1 @@
+*/20 * * * * cd uptime-hedge; node check_daemon.js 1>>~/.config/uptime-hedge/check_daemon.log 2>>~/.config/uptime-hedge/check_daemon.err
