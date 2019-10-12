@@ -32,7 +32,7 @@ function App() {
 
   useEffect(() => {
     axios.get(`https://cors-anywhere.herokuapp.com/https://bb-odds.herokuapp.com/api/rates`).then(res => {
-      setRate(res.data.data.GBB_USD * 1000000);
+      setRate(res.data.data.GBYTE_USD * 1000000);
     });
   }, []);
 

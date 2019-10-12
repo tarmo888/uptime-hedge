@@ -6,6 +6,7 @@
   "repository": "github:tarmo888/uptime-hedge",
   "author": "g48-team",
   "dependencies": {
+    "base64url": "3.0.1",
     "headless-obyte": "git+https://github.com/byteball/headless-obyte.git#aa",
     "koa": "2.6.1",
     "koa-body": "4.0.4",

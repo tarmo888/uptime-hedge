@@ -21,15 +21,20 @@ const headlessWallet = require('headless-obyte');
 const device = require('ocore/device.js');
 const objectHash = require('ocore/object_hash.js');
 const moment = require('moment');
+const base64url = require('base64url');
 
 const pairingProtocol = process.env.testnet ? 'byteball-tn:' : 'byteball:';
+const aaAddress = 'UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH';
 
 Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
 
+let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
+let provider = {};
+let sum = {};
 
 app.use(koaBody());
 render(app, {
@@ -137,11 +142,42 @@ async function parseText(from_address, text) {
 		});
 	}
 	else {
+
 		if (text == 'email') {
-			device.sendMessageToDevice(from_address, 'text', 'Please provide your private email [...](profile-request:email) or sign this message with single-address wallet, which has publicly attested email address [...](sign-message-request:'+ challenge_email +').\nIf you haven\'t verified your email address yet then please do it with Email Attestation bot from Bot Store.\n[How to get the Email Attestation bot from Bot Store?](command:email attestation?)');
-		}
-		else {
-			device.sendMessageToDevice(from_address, 'text', 'Hi');
+			device.sendMessageToDevice(from_address, 'text', 'Please provide your private email [...](profile-request:email) or sign this message with single-address wallet, which has publicly attested email address [...](sign-message-request:'+ challenge_email +').\nIf you haven\'t verified your email address yet then please do it with Email Attestation bot from Bot Store.\n[I want to offer bet](command:offer bet)');
+		} else if (text == 'offer bet') {
+			device.sendMessageToDevice(from_address, 'text', 'Which cloud services provider do you want to insure? \n [Amazon Web Services](command:provider/aws) \n [Google Cloud](command:provider/google) \n [Azure](command:provider/azure) \n [Zone](command:provider/zone) \n');
+		} else if (text.includes('provider/')) {
+			provider[from_address] = text.split('/')[1];
+			device.sendMessageToDevice(from_address, 'text', 'For the sum: \n [50€](command:sum/50) \n [200€](command:sum/200) \n [500€](command:sum/500) \n [1000€](command:sum/1000) \n [5000€](command:sum/5000) \n');
+		} else if (provider[from_address] && text.includes('sum/')) {
+			sum[from_address] = text.split('/')[1];
+			let price1 = sum[from_address]/10;
+			let price2 = price1*2;
+			let price3 = price1*4;
+			let price4 = price1*6;
+			let price5 = price1*8;
+			device.sendMessageToDevice(from_address, 'text', `And the price I\'m willing to pay is: \n [${price1}€](command:price/${price1}) \n [${price2}€](command:price/${price2}) \n [${price3}€](command:price/${price3}) \n [${price4}€](command:price/${price4}) \n [${price5}€](command:price/${price5}) \n`);
+		} else if (provider[from_address] && sum[from_address] && text.includes('price/')) {
+			let price = text.split('/')[1];
+			let rate = exchangeRates.GBYTE_USD * 1000000;
+
+			const data = {
+				serviceProvider: provider[from_address],
+				insuranceAmount: Math.floor(sum[from_address] * rate),
+				payAmount: Math.floor(price * rate),
+				willCrash: 1,
+			  };
+		  
+			  const json_string = JSON.stringify(data);
+
+			device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
+
+			delete price[from_address];
+			delete sum[from_address];
+			delete provider[from_address];
+		} else {
+			device.sendMessageToDevice(from_address, 'text', 'Hi! \n [To offer a bet](command:offer bet) \n [To take a bet](command:take bet)');
 		}
 	}
 }
@@ -149,8 +185,12 @@ async function parseText(from_address, text) {
 eventBus.once('headless_wallet_ready', () => {
 	headlessWallet.setupChatEventHandlers();
 
-	eventBus.on('paired', parseText);
-	eventBus.on('text', parseText);
+	eventBus.on("rates_updated", () => {
+		exchangeRates = network.exchangeRates;
+		eventBus.on('paired', parseText);
+		eventBus.on('text', parseText);
+	
+	});
 
 	app.listen(conf.webPort);
 });
