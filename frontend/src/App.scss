@@ -1,0 +1,193 @@
+.card {
+  background: white;
+  border-radius: 6px;
+  padding: 32px 52px 48px 52px;
+  box-shadow: 0 2px 20px 0 rgba(0,0,0,0.1);
+
+  & + & {
+    margin-top: 16px;
+  }
+}
+
+.card__title {
+  font-size: 24px;
+  color: rgba(0,0,0,0.85);
+  font-weight: 700;
+}
+
+.card__product-options,
+.card__options {
+  margin-top: 22px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.card__product-option {
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 1168px;
+  padding: 50px 16px;
+  margin: 0 auto;
+}
+
+.container__inner {
+  display: flex;
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  height: 100vh;
+
+  &.side--left {
+    border-right: 1px solid black;
+  }
+}
+
+.card__product-option {
+  position: relative;
+  height: 150px;
+  width: 150px;
+  border-radius: 20px;
+}
+
+.card__option {
+  position: relative;
+  height: 60px;
+  width: 160px;
+}
+
+/* Hide the browser's default checkbox */
+.card__product-option input,
+.card__option input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+  border-radius: 20px;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 150px;
+  width: 150px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+
+  &.checkmark--sum {
+    position: relative;
+    color: rgba(176,176,176,0.85);
+    height: auto;
+    width: auto;
+    height: 60px;
+    width: 160px;
+    border-radius: 10px;
+    border-color: #DFDFDF;
+    cursor: pointer;
+    transition: border-color 200ms, color 200ms, background-color 200ms linear;
+  }
+}
+
+/* On mouse-over, add a grey background color */
+.card__product-option:hover input ~ .checkmark {
+  border-color: #DFDFDF;
+}
+
+.card__option:hover input ~ .checkmark--sum {
+  border-color: #660E94;
+  border-width: 2px;
+  font-weight: 700;
+  color: #660E94
+}
+
+/* When the checkbox is checked, add a blue background */
+.card__product-option input:checked ~ .checkmark {
+  box-shadow: 0 2px 40px 0 rgba(0,0,0,0.2);
+  transition: box-shadow 200ms linear;
+}
+
+.card__product-option:hover input:checked ~ .checkmark {
+  border-color: transparent;
+}
+
+
+.card__product-option input:checked ~ .checkmark .icon {
+  filter: grayscale(0);
+}
+
+.card__option input:checked ~ .checkmark--sum {
+  background-color: #660E94;
+  font-weight: 700;
+  color: white;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.card__product-option input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-top: 24px;
+  color: white;
+  font-weight: 700;
+  border-radius: 6px;
+  background-color: #0F9D03;
+  border: none;
+  width: 270px;
+  height: 64px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.icon {
+  margin-bottom: 20px;
+  width: 90px;
+  height: auto;
+  transition: filter 200ms linear;
+
+  &.icon--google {
+    width: 70px;
+  }
+
+  &.icon--azure {
+    width: 64px;
+  }
+
+  &.icon--zone {
+    width: 110px;
+  }
+
+  .App.item-is-selected & {
+    filter: grayscale(100%);
+  }
+}
