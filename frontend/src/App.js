@@ -44,7 +44,7 @@ function App() {
 
   useEffect(() => {
     axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
-      setRate(res.data.data.GBYTE_USD * 1000000000);
+      setRate(res.data.data.GBYTE_USD);
     });
     const interval = setInterval(() => {
       setTopPosition(topPosition => topPosition + 1)
