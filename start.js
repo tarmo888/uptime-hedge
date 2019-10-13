@@ -163,23 +163,22 @@ async function parseText(from_address, text) {
 		} else if (text == 'take bet') {
 			betAction[from_address] = 'take';
 
-			let response = {
-				responseTimestamp: '12.10.2019 00:12:11',
-				serviceProvider: 'aws',
-				insuranceAmount: 985109389,
-				payAmount: 98510938,
-				willCrash: 1
-			}
-			let response2 = {
-				responseTimestamp: '12.10.2019 00:12:11',
-				serviceProvider: 'azure',
-				insuranceAmount: 985109389,
-				payAmount: 98510938,
-				willCrash: 1
-			}
-			responseModified.push(response);
-			responseModified.push(response2);
-			device.sendMessageToDevice(from_address, 'text', 'test' + responseModified.length);
+			// let response = {
+			// 	responseTimestamp: '12.10.2019 00:12:11',
+			// 	serviceProvider: 'aws',
+			// 	insuranceAmount: 985109389,
+			// 	payAmount: 98510938,
+			// 	willCrash: 1
+			// }
+			// let response2 = {
+			// 	responseTimestamp: '12.10.2019 00:12:11',
+			// 	serviceProvider: 'azure',
+			// 	insuranceAmount: 985109389,
+			// 	payAmount: 98510938,
+			// 	willCrash: 1
+			// }
+			// responseModified.push(response);
+			// responseModified.push(response2);
 
 			if (responseModified.length) {
 				let message = `List of available bets: \n\n`;
@@ -193,7 +192,8 @@ async function parseText(from_address, text) {
 				device.sendMessageToDevice(from_address, 'text', message);
 	
 			} else {
-				device.sendMessageToDevice(from_address, 'text', 'No available offers');		
+				device.sendMessageToDevice(from_address, 'text', 'No available offers');
+				device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');		
 			}
 
 		} else if (betAction[from_address] == 'offer') {
@@ -224,7 +224,7 @@ async function parseText(from_address, text) {
 						const json_string = JSON.stringify(data);
 
 						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
-						device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
+						device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 
 						delete betAction[from_address];
 						delete insuranceAmount[from_address];
@@ -246,10 +246,10 @@ async function parseText(from_address, text) {
 			};			
 			const json_string = JSON.stringify(data);			
 			device.sendMessageToDevice(from_address, 'text', `[Take offer](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
-			device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
+			device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 			delete betAction[from_address];
 		} else {
-			device.sendMessageToDevice(from_address, 'text', 'Hi! Choose an action: \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
+			device.sendMessageToDevice(from_address, 'text', 'Hi! Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 		}
 	}
 }
