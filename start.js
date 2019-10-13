@@ -30,13 +30,7 @@ Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
 // Response item too list all offers
-let responseModified = {
-    responseTimestamp: null,
-    serviceProvider: null,
-    insuranceAmount: null,
-    payAmount: null,
-    willCrash: null
-}
+let responseModified = {};
 let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
@@ -199,7 +193,9 @@ async function parseText(from_address, text) {
 						const json_string = JSON.stringify(data);
 
 						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
+						device.sendMessageToDevice(from_address, 'text', 'Hi! \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
 
+						delete betAction[from_address];
 						delete insuranceAmount[from_address];
 						delete serviceProvider[from_address];
 					} 
@@ -221,12 +217,15 @@ eventBus.once('headless_wallet_ready', () => {
 
 	walletGeneral.addWatchedAddress(aa_address, () => {
         eventBus.on('aa_response_from_aa-' + aa_address, objAAResponse => {
-            responseModified.responseTimestamp = objAAResponse.objaobjResponseUnit.timestamp
-            responseModified.serviceProvider = objaobjResponseUnit.response.serviceProvider
-            responseModified.insuranceAmount = objaobjResponseUnit.response.insuranceAmount
-            responseModified.payAmount = objaobjResponseUnit.response.payAmount
-            responseModified.willCrash = objaobjResponseUnit.response.willCrash
-            console.error(responseModified)
+			let response = {
+				responseTimestamp: objAAResponse.objaobjResponseUnit.timestamp,
+				serviceProvider: objaobjResponseUnit.response.serviceProvider,
+				insuranceAmount: objaobjResponseUnit.response.insuranceAmount,
+				payAmount: objaobjResponseUnit.response.payAmount,
+				willCrash: objaobjResponseUnit.response.willCrash
+			}
+			responseModified.push(response);
+            console.error(response)
             // for (const key of Object.keys(responseModified)) {
             //     if (!responseModified[key]) {
             //         console.error(key, ' is missing, stopping.')
