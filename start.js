@@ -29,7 +29,14 @@ const aaAddress = 'UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH';
 Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
-
+// Response item too list all offers
+let responseModified = {
+    responseTimestamp: null,
+    serviceProvider: null,
+    insuranceAmount: null,
+    payAmount: null,
+    willCrash: null
+}
 let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
@@ -45,6 +52,15 @@ render(app, {
 	cache: false,
 	debug: false
 });
+
+
+async function sendData(ctx) {
+    ctx.body = responseModified
+}
+async function sendRates(ctx) {
+    ctx.body = exchangeRates
+}
+
 app.use(serve(__dirname + '/public'));
 
 app.keys = [conf.salt];
@@ -61,7 +77,8 @@ async function page(ctx) {
 		moment,
 	});
 }
-
+app.use(mount('/api-currencies', sendRates));
+app.use(mount('/api-offers', sendData));
 app.use(mount('/', page));
 
 async function parseText(from_address, text) {
@@ -201,6 +218,24 @@ async function parseText(from_address, text) {
 }
 
 eventBus.once('headless_wallet_ready', () => {
+
+	walletGeneral.addWatchedAddress(aa_address, () => {
+        eventBus.on('aa_response_from_aa-' + aa_address, objAAResponse => {
+            responseModified.responseTimestamp = objAAResponse.objaobjResponseUnit.timestamp
+            responseModified.serviceProvider = objaobjResponseUnit.response.serviceProvider
+            responseModified.insuranceAmount = objaobjResponseUnit.response.insuranceAmount
+            responseModified.payAmount = objaobjResponseUnit.response.payAmount
+            responseModified.willCrash = objaobjResponseUnit.response.willCrash
+            console.error(responseModified)
+            // for (const key of Object.keys(responseModified)) {
+            //     if (!responseModified[key]) {
+            //         console.error(key, ' is missing, stopping.')
+            //     }
+            // }
+            return
+
+        });
+    });
 	headlessWallet.setupChatEventHandlers();
 
 	eventBus.on("rates_updated", () => {
