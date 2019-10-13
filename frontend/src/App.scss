@@ -1,10 +1,16 @@
+.ReactModal__Body--open {
+  overflow-y: hidden;
+  position: fixed;
+  width: 100%;
+}
+
 .choice-modal-wrapper {
   position: absolute;
   width: 100vw;
   height: 100vh;
   max-width: none !important;
   background: rgba(255, 255, 255, 0.8);
-  overflow: auto;
+  overflow: hidden;
   outline: none;
 
   .button {
@@ -19,6 +25,54 @@
   align-items: center;
   justify-content: space-evenly;
   display: flex;
+}
+
+.choice__button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 20px 60px;
+  height: 100vh;
+  width: 50vw;
+  font-weight: 700;
+  font-size: 36px;
+  outline: 0 !important;
+  color: white;
+  transition: transform 200ms ease-in-out;
+
+  img {
+    width: 70px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+
+  &.choice__button--invest {
+    background: #3C55C8;
+  }
+
+  &.choice__button--insure {
+    background: #660E94;
+  }
+}
+
+.choice__button--invest {
+  width: calc(50vw + 40px);
+
+  &:hover {
+    transform: translateX(-20px);
+  }
+}
+
+.choice__button--insure {
+  width: calc(50vw + 40px);
+
+  &:hover {
+    transform: translateX(20px);
+  }
 }
 
 .card {
@@ -43,6 +97,11 @@
   margin-top: 22px;
   display: flex;
   justify-content: space-evenly;
+
+  &.tabs {
+    margin-top: 0;
+    margin-bottom: 40px;
+  }
 }
 
 .card__product-option {
@@ -61,23 +120,17 @@
   display: flex;
 }
 
-.side {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  height: 100vh;
-
-  &.side--left {
-    border-right: 1px solid black;
-  }
-}
-
 .card__product-option {
   position: relative;
   height: 150px;
   width: 150px;
   border-radius: 20px;
+
+  .tabs & {
+    height: auto;
+    border-radius: 0;
+    width: 100%;
+  }
 }
 
 .card__option {
@@ -125,6 +178,16 @@
       cursor: pointer;
     }
   }
+
+  .tabs & {
+    height: 50px;
+    width: 100%;
+    border-radius: 0px;
+    background: white;
+    border: 1px solid #DFDFDF;
+    font-size: 24px;
+    font-weight: 700;
+  }
 }
 
 /* On mouse-over, add a grey background color */
@@ -139,6 +202,10 @@
   color: #660E94;
 }
 
+.tabs .card__product-option:hover input ~ .checkmark {
+  color: #660E94;
+}
+
 /* When the checkbox is checked, add a blue background */
 .card__product-option input:checked ~ .checkmark {
   box-shadow: 0 2px 40px 0 rgba(0,0,0,0.2);
@@ -149,6 +216,13 @@
   border-color: transparent;
 }
 
+.tabs .card__product-option input:checked ~ .checkmark {
+  box-shadow: none;
+  border-color: #660E94;
+  border-width: 2px;
+  font-weight: 700;
+  color: #660E94;
+}
 
 .card__product-option input:checked ~ .checkmark .icon {
   filter: grayscale(0);
@@ -188,6 +262,7 @@
   height: 64px;
   font-size: 24px;
   cursor: pointer;
+  outline: 0 !important;
 }
 
 .icon {
@@ -249,4 +324,8 @@
 
 .ReactModal__Overlay--before-close{
   opacity: 0;
+}
+
+.ReactModal__Content {
+  overflow: hidden !important;
 }
