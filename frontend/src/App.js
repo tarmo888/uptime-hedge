@@ -13,6 +13,7 @@ import {FaTimes} from 'react-icons/fa';
 import Insure from './assets/insure.png';
 import Invest from './assets/invest.png';
 import TakerView from './TakerView';
+import Logo from './assets/logo.png';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -23,7 +24,6 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState('insure');
   const [choiceMade, setChoiceMade] = useState(false);
-  const [step, setStep] = useState(1);
 
   const getBase64Data = () => {
     const data = {
@@ -60,12 +60,10 @@ function App() {
 
   const handleOptionChange = (changeEvent) => {
     setServiceProvider(changeEvent.target.value);
-    setStep(2);
   };
 
   const handlePayChange = (changeEvent) => {
     setPayAmount(changeEvent.target.value);
-    setStep(3);
   }
 
   const handleInsuranceChange = (changeEvent) => {
@@ -183,6 +181,9 @@ function App() {
   return (
     <div className={className}>
       <div className="container">
+        <div className="logo__wrapper">
+          <img className="logo" alt="logo" src={Logo} />
+        </div>
         <div className="card">
           <div className="card__product-options tabs">
             <label className="card__product-option">
