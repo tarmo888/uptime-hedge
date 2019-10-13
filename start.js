@@ -26,19 +26,18 @@ const base64url = require('base64url');
 const walletGeneral = require('ocore/wallet_general');
 
 const pairingProtocol = process.env.testnet ? 'byteball-tn:' : 'byteball:';
-const aaAddress = 'UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH';
 
 Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
 // Response item too list all offers
 let responseModified = [];
-let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
 let serviceProvider = {};
 let insuranceAmount = {};
 let betAction = {}
+let exchangeRates;
 
 app.use(koaBody());
 render(app, {
@@ -51,10 +50,10 @@ render(app, {
 
 
 async function sendOffer(ctx) {
-    ctx.body = {data:responseModified}
+	ctx.body = {data:responseModified}
 }
 async function sendRates(ctx) {
-    ctx.body = {data:exchangeRates}
+	ctx.body = {data:exchangeRates}
 }
 
 app.use(serve(__dirname + '/public'));
@@ -144,7 +143,7 @@ async function parseText(from_address, text) {
 		privateProfile.parseAndValidatePrivateProfile(objPrivateProfile, (err, address, attestor_address) => {
 			if (err)
 				return device.sendMessageToDevice(from_address, 'text', err);
-			 if (conf.arrEmailAttestors.indexOf(attestor_address) !== -1) {
+			if (conf.arrEmailAttestors.indexOf(attestor_address) !== -1) {
 				if (assocDevice2Email[from_address]) {
 					return device.sendMessageToDevice(from_address, 'text', 'Thank you. We already got your data.');
 				}
@@ -193,14 +192,14 @@ async function parseText(from_address, text) {
 				let rate = exchangeRates.GBYTE_USD * 1000000;
 
 				responseModified.forEach(function callback(offer, index) {
-					message += `[${offer.serviceProvider} - ${Math.round((offer.insuranceAmount / rate - offer.payAmount / rate) * 100) / 100} (rate: ${Math.round(offer.insuranceAmount / offer.payAmount * 100) / 100})](command:take/${index}) \n`;				
+					message += `[${offer.serviceProvider} - ${Math.round((offer.insuranceAmount / rate - offer.payAmount / rate) * 100) / 100} (rate: ${Math.round(offer.insuranceAmount / offer.payAmount * 100) / 100})](command:take/${index}) \n`;
 				});
 
 				device.sendMessageToDevice(from_address, 'text', message);
-	
+
 			} else {
 				device.sendMessageToDevice(from_address, 'text', 'No available offers');
-				device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');		
+				device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 			}
 
 		} else if (betAction[from_address] == 'offer') {
@@ -227,18 +226,18 @@ async function parseText(from_address, text) {
 							payAmount: Math.floor(payAmount * rate),
 							willCrash: 1,
 						};
-					
+
 						const json_string = JSON.stringify(data);
 
-						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
+						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
 						device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 
 						delete betAction[from_address];
 						delete insuranceAmount[from_address];
 						delete serviceProvider[from_address];
-					} 
-				} 
-			} 
+					}
+				}
+			}
 		} else if (betAction[from_address] == 'take') {
 
 			let index = text.split('/')[1];
@@ -250,9 +249,9 @@ async function parseText(from_address, text) {
 				insuranceAmount: offer.insuranceAmount,
 				payAmount: offer.insuranceAmount - offer.payAmount,
 				willCrash: Number(!offer.willCrash),
-			};			
-			const json_string = JSON.stringify(data);			
-			device.sendMessageToDevice(from_address, 'text', `[Take offer](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
+			};
+			const json_string = JSON.stringify(data);
+			device.sendMessageToDevice(from_address, 'text', `[Take offer](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
 			device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 			delete betAction[from_address];
 		} else {
@@ -262,10 +261,8 @@ async function parseText(from_address, text) {
 }
 
 eventBus.once('headless_wallet_ready', () => {
-	const watchAaAadress = '' // TODO! Add correct aaAdress
-
-	walletGeneral.addWatchedAddress(watchAaAadress, () => {
-		eventBus.on('aa_response_from_aa-' + watchAaAadress, objAAResponse => {
+	walletGeneral.addWatchedAddress(conf.aaAddress, () => {
+		eventBus.on('aa_response_from_aa-' + conf.aaAddress, objAAResponse => {
 			//Dummy data
 			// const response = {
 			// 	responseTimestamp: '1570969315',
@@ -293,10 +290,10 @@ eventBus.once('headless_wallet_ready', () => {
 	eventBus.on("rates_updated", () => {
 		exchangeRates = network.exchangeRates;
 	});
-		eventBus.on('paired', parseText);
-		eventBus.on('text', parseText);
+	eventBus.on('paired', parseText);
+	eventBus.on('text', parseText);
 
-	});
+});
 
 eventBus.on('new_my_transactions', async (arrUnits) => {
 	const device = require('ocore/device.js');
