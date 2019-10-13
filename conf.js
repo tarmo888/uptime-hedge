@@ -30,3 +30,5 @@ exports.arrEmailAttestors = process.env.testnet ? ['BI3TPDMCXLTB5OJIG2HU6QGCKHBZ
 
 exports.webPort = 8080;
 exports.salt = ''; // change me!
+
+exports.aaAddress = '24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG';
