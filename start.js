@@ -280,10 +280,9 @@ eventBus.once('headless_wallet_ready', () => {
 
 	eventBus.on("rates_updated", () => {
 		exchangeRates = network.exchangeRates;
-		eventBus.on('paired', parseText);
-		eventBus.on('text', parseText);
-	
 	});
+	eventBus.on('paired', parseText);
+	eventBus.on('text', parseText);
 
 	app.listen(conf.webPort);
 });
