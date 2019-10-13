@@ -97,8 +97,10 @@
     width: 160px;
     border-radius: 10px;
     border-color: #DFDFDF;
-    cursor: pointer;
-    transition: border-color 200ms, color 200ms, background-color 200ms linear;
+
+    .App.item-is-selected & {
+      cursor: pointer;
+    }
   }
 }
 
@@ -111,7 +113,7 @@
   border-color: #660E94;
   border-width: 2px;
   font-weight: 700;
-  color: #660E94
+  color: #660E94;
 }
 
 /* When the checkbox is checked, add a blue background */
@@ -153,10 +155,6 @@
 }
 
 .button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
   margin-top: 24px;
   color: white;
   font-weight: 700;
