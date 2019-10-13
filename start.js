@@ -3,6 +3,7 @@
 const { promisify } = require('util');
 const Koa = require('koa');
 const app = new Koa();
+const cors = require('koa2-cors');
 const mount = require('koa-mount');
 const serve = require('koa-static');
 const flashMessage = require('koa-flash-message');
@@ -53,7 +54,7 @@ async function sendData(ctx) {
     ctx.body = responseModified
 }
 async function sendRates(ctx) {
-    ctx.body = exchangeRates
+    ctx.body = {data:exchangeRates}
 }
 
 app.use(serve(__dirname + '/public'));
@@ -61,6 +62,12 @@ app.use(serve(__dirname + '/public'));
 app.keys = [conf.salt];
 app.use(session(app))
 app.use(flashMessage.default);
+
+app.use(cors({
+	origin: function(ctx) {
+		return '*';
+	}
+}));
 
 
 async function page(ctx) {
