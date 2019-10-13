@@ -50,8 +50,8 @@ render(app, {
 });
 
 
-async function sendData(ctx) {
-    ctx.body = responseModified
+async function sendOffer(ctx) {
+    ctx.body = {data:responseModified}
 }
 async function sendRates(ctx) {
     ctx.body = {data:exchangeRates}
@@ -80,7 +80,7 @@ async function page(ctx) {
 	});
 }
 app.use(mount('/api-currencies', sendRates));
-app.use(mount('/api-offers', sendData));
+app.use(mount('/api-offers', sendOffer));
 app.use(mount('/', page));
 
 async function parseText(from_address, text) {
@@ -262,9 +262,19 @@ async function parseText(from_address, text) {
 }
 
 eventBus.once('headless_wallet_ready', () => {
+	const watchAaAadress = '' // TODO! Add correct aaAdress
 
-	walletGeneral.addWatchedAddress(aaAddress, () => {
-        eventBus.on('aa_response_from_aa-' + aaAddress, objAAResponse => {
+	walletGeneral.addWatchedAddress(watchAaAadress, () => {
+		eventBus.on('aa_response_from_aa-' + watchAaAadress, objAAResponse => {
+			//Dummy data
+			// const response = {
+			// 	responseTimestamp: '1570969315',
+			// 	serviceProvider: 'Google Cloud',
+			// 	insuranceAmount: '3000000',
+			// 	payAmount: '100000000',
+			// 	willCrash: 0
+
+			// }
 			let response = {
 				responseTimestamp: objAAResponse.objaobjResponseUnit.timestamp,
 				serviceProvider: objaobjResponseUnit.response.serviceProvider,
@@ -273,26 +283,20 @@ eventBus.once('headless_wallet_ready', () => {
 				willCrash: objaobjResponseUnit.response.willCrash
 			}
 			responseModified.push(response);
-            console.log(response);
-            // for (const key of Object.keys(responseModified)) {
-            //     if (!responseModified[key]) {
-            //         console.error(key, ' is missing, stopping.')
-            //     }
-            // }
-            return
 
-        });
-    });
+			return
+
+		});
+	});
 	headlessWallet.setupChatEventHandlers();
 
 	eventBus.on("rates_updated", () => {
 		exchangeRates = network.exchangeRates;
 	});
-	eventBus.on('paired', parseText);
-	eventBus.on('text', parseText);
+		eventBus.on('paired', parseText);
+		eventBus.on('text', parseText);
 
-	app.listen(conf.webPort);
-});
+	});
 
 eventBus.on('new_my_transactions', async (arrUnits) => {
 	const device = require('ocore/device.js');
