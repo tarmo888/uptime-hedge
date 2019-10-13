@@ -7,6 +7,9 @@ import Azure from './azure';
 import AWS from './aws';
 import Google from './assets/google.png'
 import classNames from 'classnames';
+import QRCode from 'qrcode.react';
+import Modal from 'react-modal';
+import {FaTimes} from 'react-icons/fa';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -14,6 +17,7 @@ function App() {
   const [rate, setRate] = useState(null);
   const [base64data, setBase64Data] = useState(null);
   const [serviceProvider, setServiceProvider] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const getBase64Data = () => {
     const data = {
@@ -32,13 +36,21 @@ function App() {
 
   useEffect(() => {
     axios.get(`https://cors-anywhere.herokuapp.com/https://bb-odds.herokuapp.com/api/rates`).then(res => {
-      setRate(res.data.data.GBB_USD * 1000000);
+      setRate(res.data.data.GBYTE_USD * 1000000);
     });
   }, []);
 
   useEffect(() => {
     getBase64Data();
   });
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  }
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  }
 
   const handleOptionChange = (changeEvent) => {
     setServiceProvider(changeEvent.target.value);
@@ -61,6 +73,16 @@ function App() {
   return (
     <div className={className}>
       <div className="container">
+      <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+        >
+          <button className="modal__button" onClick={closeModal}><FaTimes /></button>
+          <h2>Scan or click QRcode</h2>
+            <a href={`byteball-tn:UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH?amount=${payAmount}&base64data=${base64data}`}>
+              <QRCode size={200} value={`byteball-tn:UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH?amount=${payAmount}&base64data=${base64data}`} />
+            </a>
+        </Modal>
         <div className="card">
           <h3 className="card__title">I want to insure my server on</h3>
           <div className="card__product-options">
@@ -133,7 +155,7 @@ function App() {
           </div>
         </div>
         <div className="button-wrapper">
-          <a href={`byteball-tn:UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH?amount=${payAmount}&base64data=${base64data}`} className="button"><span>🦔</span> Hedge it</a>
+          <a href="#" onClick={openModal} className="button"><span>🦔</span> Hedge it</a>
         </div>
       </div>
     </div>
