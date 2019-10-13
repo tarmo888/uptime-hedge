@@ -12,6 +12,7 @@ import Modal from 'react-modal';
 import {FaTimes} from 'react-icons/fa';
 import Insure from './assets/insure.png';
 import Invest from './assets/invest.png';
+import TakerView from './TakerView';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -40,7 +41,7 @@ function App() {
   }
 
   useEffect(() => {
-    axios.get(`https://cors-anywhere.herokuapp.com/https://bb-odds.herokuapp.com/api/rates`).then(res => {
+    axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
       setRate(res.data.data.GBYTE_USD * 1000000);
     });
   }, []);
@@ -170,7 +171,7 @@ function App() {
   const renderInvestContent = () => {
     return (
       <div className="card">
-        Here be da invest table
+        <TakerView/>
       </div>
     )
   }
