@@ -10,6 +10,11 @@ import classNames from 'classnames';
 import QRCode from 'qrcode.react';
 import Modal from 'react-modal';
 import {FaTimes} from 'react-icons/fa';
+import smoothscroll from 'smoothscroll-polyfill';
+
+if (process.browser) {
+  smoothscroll.polyfill();
+}
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -18,6 +23,7 @@ function App() {
   const [base64data, setBase64Data] = useState(null);
   const [serviceProvider, setServiceProvider] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [isChoiceMade, setIsChoiceMade] = useState(false);
 
   const getBase64Data = () => {
     const data = {
@@ -67,6 +73,18 @@ function App() {
   const calculatePayAmount = (times = 1) => {
     return `${Number(payAmount) / 10 * times}`
   }
+
+  const onChoiceModalOptionClick = (choice) => {
+    setIsChoiceMade(choice);
+
+    if (choice === 'invest') {
+      scrollDown();
+    }
+  }
+
+  const scrollDown = () => {
+    window.scroll({ top: 200, left: 0, behavior: 'smooth' });
+  };
 
   const className = classNames('App',
     {
@@ -152,6 +170,15 @@ function App() {
           <button onClick={openModal} className="button"><span role="img" aria-label="hedge">🦔</span> Hedge it</button>
         </div>
       </div>
+      <Modal
+          isOpen={!isChoiceMade}
+          className="choice-modal-wrapper"
+        >
+          <div className="choice-modal">
+          <button onClick={onChoiceModalOptionClick.bind(null, 'insure')} className="button">Insure</button>
+          <button onClick={onChoiceModalOptionClick.bind(null, 'invest')} className="button">Invest</button>
+        </div>
+      </Modal>
       <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
