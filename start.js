@@ -189,7 +189,7 @@ async function parseText(from_address, text) {
 			if (responseModified.length) {
 				let message = `List of available bets: \n\n`;
 
-				let rate = exchangeRates.GBYTE_USD * 1000000000;
+				let rate = exchangeRates.GBYTE_USD;
 
 				responseModified.forEach(function callback(offer, index) {
 					message += `[${offer.serviceProvider} - ${Math.round((offer.insuranceAmount / rate - offer.payAmount / rate) * 100) / 100} (rate: ${Math.round(offer.insuranceAmount / offer.payAmount * 100) / 100})](command:take/${index}) \n`;
@@ -218,7 +218,7 @@ async function parseText(from_address, text) {
 				} else if (insuranceAmount[from_address]) {
 					if (text.includes('payAmount/')) {
 						let payAmount = text.split('/')[1];
-						let rate = exchangeRates.GBYTE_USD * 1000000000;
+						let rate = exchangeRates.GBYTE_USD;
 
 						const data = {
 							serviceProvider: serviceProvider[from_address],
@@ -241,7 +241,7 @@ async function parseText(from_address, text) {
 		} else if (betAction[from_address] == 'take') {
 
 			let index = text.split('/')[1];
-			let rate = exchangeRates.GBYTE_USD * 1000000000;
+			let rate = exchangeRates.GBYTE_USD;
 
 			let offer = responseModified[index]
 			const data = {
