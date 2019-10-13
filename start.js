@@ -182,7 +182,9 @@ async function parseText(from_address, text) {
 						const json_string = JSON.stringify(data);
 
 						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
+						device.sendMessageToDevice(from_address, 'text', 'Hi! \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
 
+						delete betAction[from_address];
 						delete insuranceAmount[from_address];
 						delete serviceProvider[from_address];
 					} 
