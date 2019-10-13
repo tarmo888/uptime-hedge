@@ -29,7 +29,7 @@ const aaAddress = 'UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH';
 Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
-
+// Response item too list all offers
 let responseModified = {
     responseTimestamp: null,
     serviceProvider: null,
