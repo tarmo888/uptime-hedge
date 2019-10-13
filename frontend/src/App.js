@@ -12,6 +12,7 @@ import Modal from 'react-modal';
 import {FaTimes} from 'react-icons/fa';
 import Insure from './assets/insure.png';
 import Invest from './assets/invest.png';
+import TakerView from './TakerView';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -165,7 +166,7 @@ function App() {
   const renderInvestContent = () => {
     return (
       <div className="card">
-        Here be da invest table
+        <TakerView/>
       </div>
     )
   }
