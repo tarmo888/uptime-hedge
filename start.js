@@ -169,22 +169,14 @@ async function parseText(from_address, text) {
 		} else if (text == 'take bet') {
 			betAction[from_address] = 'take';
 
-			// let response = {
-			// 	responseTimestamp: '12.10.2019 00:12:11',
-			// 	serviceProvider: 'aws',
-			// 	insuranceAmount: 985109389,
-			// 	payAmount: 98510938,
-			// 	willCrash: 1
-			// }
-			// let response2 = {
-			// 	responseTimestamp: '12.10.2019 00:12:11',
-			// 	serviceProvider: 'azure',
-			// 	insuranceAmount: 985109389,
-			// 	payAmount: 98510938,
-			// 	willCrash: 1
-			// }
-			// responseModified.push(response);
-			// responseModified.push(response2);
+			let response = {
+				responseTimestamp: '13.10.2019 15:21:55',
+				serviceProvider: 'Google Cloud',
+				insuranceAmount: 37.930257032192,
+				payAmount: 18.965128516096,
+				willCrash: 1
+			}
+			responseModified.push(response);
 
 			if (responseModified.length) {
 				let message = `List of available bets: \n\n`;
@@ -192,7 +184,7 @@ async function parseText(from_address, text) {
 				let rate = exchangeRates.GBYTE_USD * 1000000000;
 
 				responseModified.forEach(function callback(offer, index) {
-					message += `[${offer.serviceProvider} - ${Math.round((offer.insuranceAmount / rate - offer.payAmount / rate) * 100) / 100} (rate: ${Math.round(offer.insuranceAmount / offer.payAmount * 100) / 100})](command:take/${index}) \n`;
+					message += `[${offer.serviceProvider} - ${offer.insuranceAmount} (Pay this much: ${offer.payAmount})](command:take/${index}) \n`;
 				});
 
 				device.sendMessageToDevice(from_address, 'text', message);
@@ -246,8 +238,8 @@ async function parseText(from_address, text) {
 			let offer = responseModified[index]
 			const data = {
 				serviceProvider: offer.serviceProvider,
-				insuranceAmount: offer.insuranceAmount,
-				payAmount: offer.insuranceAmount - offer.payAmount,
+				insuranceAmount: Math.floor((offer.insuranceAmount)* rate),
+				payAmount: Math.floor((offer.insuranceAmount - offer.payAmount)* rate),
 				willCrash: Number(!offer.willCrash),
 			};
 			const json_string = JSON.stringify(data);
