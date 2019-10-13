@@ -33,8 +33,8 @@ Array.prototype.forEachAsync = async function(fn) {
 let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
-let provider = {};
-let sum = {};
+let serviceProvider = {};
+let insuranceAmount = {};
 
 app.use(koaBody());
 render(app, {
@@ -146,36 +146,35 @@ async function parseText(from_address, text) {
 		if (text == 'email') {
 			device.sendMessageToDevice(from_address, 'text', 'Please provide your private email [...](profile-request:email) or sign this message with single-address wallet, which has publicly attested email address [...](sign-message-request:'+ challenge_email +').\nIf you haven\'t verified your email address yet then please do it with Email Attestation bot from Bot Store.\n[I want to offer bet](command:offer bet)');
 		} else if (text == 'offer bet') {
-			device.sendMessageToDevice(from_address, 'text', 'Which cloud services provider do you want to insure? \n [Amazon Web Services](command:provider/aws) \n [Google Cloud](command:provider/google) \n [Azure](command:provider/azure) \n [Zone](command:provider/zone) \n');
-		} else if (text.includes('provider/')) {
-			provider[from_address] = text.split('/')[1];
-			device.sendMessageToDevice(from_address, 'text', 'For the sum: \n [50€](command:sum/50) \n [200€](command:sum/200) \n [500€](command:sum/500) \n [1000€](command:sum/1000) \n [5000€](command:sum/5000) \n');
-		} else if (provider[from_address] && text.includes('sum/')) {
-			sum[from_address] = text.split('/')[1];
-			let price1 = sum[from_address]/10;
-			let price2 = price1*2;
-			let price3 = price1*4;
-			let price4 = price1*6;
-			let price5 = price1*8;
-			device.sendMessageToDevice(from_address, 'text', `And the price I\'m willing to pay is: \n [${price1}€](command:price/${price1}) \n [${price2}€](command:price/${price2}) \n [${price3}€](command:price/${price3}) \n [${price4}€](command:price/${price4}) \n [${price5}€](command:price/${price5}) \n`);
-		} else if (provider[from_address] && sum[from_address] && text.includes('price/')) {
-			let price = text.split('/')[1];
+			device.sendMessageToDevice(from_address, 'text', 'I want to insure my server on: \n [Amazon Web Services](command:serviceProvider/aws) \n [Google Cloud](command:serviceProvider/google) \n [Azure](command:serviceProvider/azure) \n [Zone](command:serviceProvider/zone) \n');
+		} else if (text.includes('serviceProvider/')) {
+			serviceProvider[from_address] = text.split('/')[1];
+			device.sendMessageToDevice(from_address, 'text', 'For the sum: \n [50€](command:insuranceAmount/50) \n [200€](command:insuranceAmount/200) \n [500€](command:insuranceAmount/500) \n [1000€](command:insuranceAmount/1000) \n [5000€](command:insuranceAmount/5000) \n');
+		} else if (serviceProvider[from_address] && text.includes('insuranceAmount/')) {
+			insuranceAmount[from_address] = text.split('/')[1];
+			let payAmount1 = insuranceAmount[from_address]/10;
+			let payAmount2 = payAmount1*2;
+			let payAmount3 = payAmount1*4;
+			let payAmount4 = payAmount1*6;
+			let payAmount5 = payAmount1*8;
+			device.sendMessageToDevice(from_address, 'text', `And the price I\'m willing to pay is: \n [${payAmount1}€](command:payAmount/${payAmount1}) \n [${payAmount2}€](command:payAmount/${payAmount2}) \n [${payAmount3}€](command:payAmount/${payAmount3}) \n [${payAmount4}€](command:payAmount/${payAmount4}) \n [${payAmount5}€](command:payAmount/${payAmount5}) \n`);
+		} else if (serviceProvider[from_address] && insuranceAmount[from_address] && text.includes('price/')) {
+			let payAmount = text.split('/')[1];
 			let rate = exchangeRates.GBYTE_USD * 1000000;
 
 			const data = {
-				serviceProvider: provider[from_address],
-				insuranceAmount: Math.floor(sum[from_address] * rate),
-				payAmount: Math.floor(price * rate),
+				serviceProvider: serviceProvider[from_address],
+				insuranceAmount: Math.floor(insuranceAmount[from_address] * rate),
+				payAmount: Math.floor(payAmount * rate),
 				willCrash: 1,
-			  };
+			};
 		  
-			  const json_string = JSON.stringify(data);
+			const json_string = JSON.stringify(data);
 
 			device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
 
-			delete price[from_address];
-			delete sum[from_address];
-			delete provider[from_address];
+			delete insuranceAmount[from_address];
+			delete serviceProvider[from_address];
 		} else {
 			device.sendMessageToDevice(from_address, 'text', 'Hi! \n [To offer a bet](command:offer bet) \n [To take a bet](command:take bet)');
 		}
