@@ -22,6 +22,7 @@ const device = require('ocore/device.js');
 const objectHash = require('ocore/object_hash.js');
 const moment = require('moment');
 const base64url = require('base64url');
+const walletGeneral = require('ocore/wallet_general');
 
 const pairingProtocol = process.env.testnet ? 'byteball-tn:' : 'byteball:';
 const aaAddress = 'UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH';
@@ -30,7 +31,7 @@ Array.prototype.forEachAsync = async function(fn) {
 	for (let t of this) { await fn(t) }
 }
 // Response item too list all offers
-let responseModified = {};
+let responseModified = [];
 let exchangeRates;
 var assocDevice2Email = {};
 var assocDeposit2Device = {};
@@ -74,6 +75,20 @@ async function page(ctx) {
 app.use(mount('/api-currencies', sendRates));
 app.use(mount('/api-offers', sendData));
 app.use(mount('/', page));
+
+function decimalFractionToOrdinary(val) {
+	var gcd = function(a, b) {
+		if (b < 0.0000001) return a;
+		return gcd(b, Math.floor(a % b));
+	};
+	var len = val.toString().length - 2;
+	var denominator = Math.pow(10, len);
+	var numerator = val * denominator;
+	var divisor = gcd(numerator, denominator);
+	numerator /= divisor;
+	denominator /= divisor;
+	return `${Math.floor(numerator)}/${Math.floor(denominator)}`;
+}
 
 async function parseText(from_address, text) {
 	let arrSignedMessageMatches = text.match(/\(signed-message:(.+?)\)/);
@@ -160,10 +175,25 @@ async function parseText(from_address, text) {
 			betAction[from_address] = 'offer';
 			device.sendMessageToDevice(from_address, 'text', 'I want to insure my server on: \n [Amazon Web Services](command:serviceProvider/aws) \n [Google Cloud](command:serviceProvider/google) \n [Azure](command:serviceProvider/azure) \n [Zone](command:serviceProvider/zone) \n');
 		} else if (text == 'take bet') {
-			betAction[from_address] = 'take';
-			device.sendMessageToDevice(from_address, 'text', 'List of available bets: ');
-			
-			//
+			if (responseModified.length) {
+				let message = `List of available bets: \n\n`;
+
+				responseModified.forEach(function callback(offer) {
+					const data = {
+						serviceProvider: offer.serviceProvider,
+						insuranceAmount: Math.floor(offer.insuranceAmount * rate),
+						payAmount: Math.floor((offer.insuranceAmount-offer.payAmount) * rate),
+						willCrash: Number(!offer.willCrash),
+					};			
+					const json_string = JSON.stringify(data);
+	
+					message += `[${offer.serviceProvider} - ${offer.insuranceAmount - offer.payAmount} (coef: ${decimalFractionToOrdinary(offer.insuranceAmount / offer.payAmount)})](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)}) \n`;				
+				});
+	
+			} else {
+				device.sendMessageToDevice(from_address, 'text', 'No available offers');		
+			}
+			device.sendMessageToDevice(from_address, 'text', 'Shoose an action: \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
 
 		} else if (betAction[from_address] == 'offer') {
 			if (text.includes('serviceProvider/')) {
@@ -192,7 +222,7 @@ async function parseText(from_address, text) {
 					
 						const json_string = JSON.stringify(data);
 
-						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
+						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
 						device.sendMessageToDevice(from_address, 'text', 'Hi! \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
 
 						delete betAction[from_address];
@@ -202,10 +232,16 @@ async function parseText(from_address, text) {
 				} 
 			} 
 		} else if (betAction[from_address] == 'take') {
-			if (text.includes('bet/')) {
-				
-				//
-
+			if (text.includes('take/')) {
+				let offerId = text.split('/')[1];
+				const data = {
+					serviceProvider: serviceProvider[from_address],
+					insuranceAmount: Math.floor(insuranceAmount[from_address] * rate),
+					payAmount: Math.floor(payAmount * rate),
+					willCrash: 0,
+				};
+				device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${aaAddress}?amount=${data.insuranceAmount}&base64data=${base64url(json_string)})`);
+				device.sendMessageToDevice(from_address, 'text', 'Shoose an action: \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
 			}
 		} else {
 			device.sendMessageToDevice(from_address, 'text', 'Hi! \n [Offer a bet](command:offer bet) \n [Take a bet](command:take bet)');
@@ -215,8 +251,8 @@ async function parseText(from_address, text) {
 
 eventBus.once('headless_wallet_ready', () => {
 
-	walletGeneral.addWatchedAddress(aa_address, () => {
-        eventBus.on('aa_response_from_aa-' + aa_address, objAAResponse => {
+	walletGeneral.addWatchedAddress(aaAddress, () => {
+        eventBus.on('aa_response_from_aa-' + aaAddress, objAAResponse => {
 			let response = {
 				responseTimestamp: objAAResponse.objaobjResponseUnit.timestamp,
 				serviceProvider: objaobjResponseUnit.response.serviceProvider,
@@ -225,7 +261,7 @@ eventBus.once('headless_wallet_ready', () => {
 				willCrash: objaobjResponseUnit.response.willCrash
 			}
 			responseModified.push(response);
-            console.error(response)
+            console.log(response);
             // for (const key of Object.keys(responseModified)) {
             //     if (!responseModified[key]) {
             //         console.error(key, ' is missing, stopping.')
