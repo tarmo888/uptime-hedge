@@ -73,7 +73,7 @@ function App() {
   }
 
   const calculatePayAmount = (times = 1) => {
-    return `${Number(payAmount) / 10 * times}`
+    return `${Number(insuranceAmount) / 10 * times}`
   }
 
   const onChoiceModalOptionClick = (choice) => {
@@ -110,7 +110,6 @@ function App() {
           </div>
         </div>
         <div className="card">
-          {(step !== 2 || step !== 3) && <div className="card__overlay" />}
           <h3 className="card__title">For the sum of</h3>
           <div className="card__options">
             <label className="card__option">
@@ -136,7 +135,6 @@ function App() {
           </div>
         </div>
         <div className="card">
-          {step !== 3 && <div className="card__overlay" />}
           <h3 className="card__title">And the price I'm willing to pay is</h3>
           <div className="card__options">
             <label className="card__option">
