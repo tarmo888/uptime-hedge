@@ -22,6 +22,8 @@ function App() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState('insure');
   const [choiceMade, setChoiceMade] = useState(false);
+  const [leftPosition, setLeftPosition] = useState(0);
+  const [topPosition, setTopPosition] = useState(0);
 
   const getBase64Data = () => {
     const data = {
@@ -42,6 +44,19 @@ function App() {
     axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
       setRate(res.data.data.GBYTE_USD * 1000000);
     });
+    const interval = setInterval(() => {
+      setTopPosition(topPosition => topPosition + 1)
+      setLeftPosition(leftPosition => {
+        if (leftPosition > window.innerWidth) {
+          setTopPosition(topPosition => topPosition + 100)
+          return 0
+        } else {
+          return leftPosition + 5
+        }
+      });
+      // setTopPosition(topPosition => topPosition + 4);
+    }, 50);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -158,6 +173,7 @@ function App() {
         <div className="button-wrapper">
           <button onClick={openModal} className="button"><span role="img" aria-label="hedge">🦔</span> Hedge it</button>
         </div>
+        <img className="hedgehogGif" src='https://i.imgur.com/qddqVBi.gif' width="100px" alt="hedgehog" style={{ left: leftPosition, top: topPosition}}/>
         </>
     )
   }
