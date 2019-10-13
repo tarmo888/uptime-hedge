@@ -13,6 +13,7 @@ import {FaTimes} from 'react-icons/fa';
 import Insure from './assets/insure.png';
 import Invest from './assets/invest.png';
 import TakerView from './TakerView';
+import Logo from './assets/logo.png';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -70,7 +71,7 @@ function App() {
   }
 
   const calculatePayAmount = (times = 1) => {
-    return `${Number(payAmount) / 10 * times}`
+    return `${Number(insuranceAmount) / 10 * times}`
   }
 
   const onChoiceModalOptionClick = (choice) => {
@@ -110,23 +111,23 @@ function App() {
           <h3 className="card__title">For the sum of</h3>
           <div className="card__options">
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="50" checked={payAmount === '50'} onChange={handlePayChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="50" checked={insuranceAmount === '50'} onChange={handleInsuranceChange} />
               <span className="checkmark checkmark--sum">50€</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="200" checked={payAmount === '200'} onChange={handlePayChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="200" checked={insuranceAmount === '200'} onChange={handleInsuranceChange} />
               <span className="checkmark checkmark--sum">200€</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="500" checked={payAmount === '500'} onChange={handlePayChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="500" checked={insuranceAmount === '500'} onChange={handleInsuranceChange} />
               <span className="checkmark checkmark--sum">500€</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="1000" checked={payAmount === '1000'} onChange={handlePayChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="1000" checked={insuranceAmount === '1000'} onChange={handleInsuranceChange} />
               <span className="checkmark checkmark--sum">1000€</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="5000" checked={payAmount === '5000'} onChange={handlePayChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum1" value="5000" checked={insuranceAmount === '5000'} onChange={handleInsuranceChange} />
               <span className="checkmark checkmark--sum">5000€</span>
             </label>
           </div>
@@ -135,23 +136,23 @@ function App() {
           <h3 className="card__title">And the price I'm willing to pay is</h3>
           <div className="card__options">
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount()} checked={insuranceAmount === calculatePayAmount()} onChange={handleInsuranceChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount()} checked={payAmount === calculatePayAmount()} onChange={handlePayChange} />
               <span className="checkmark checkmark--sum">{`${calculatePayAmount()}€`}</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(2)} checked={insuranceAmount === calculatePayAmount(2)} onChange={handleInsuranceChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(2)} checked={payAmount === calculatePayAmount(2)} onChange={handlePayChange} />
               <span className="checkmark checkmark--sum">{`${calculatePayAmount(2)}€`}</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(4)} checked={insuranceAmount === calculatePayAmount(4)} onChange={handleInsuranceChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(4)} checked={payAmount === calculatePayAmount(4)} onChange={handlePayChange} />
               <span className="checkmark checkmark--sum">{`${calculatePayAmount(4)}€`}</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(6)} checked={insuranceAmount === calculatePayAmount(6)} onChange={handleInsuranceChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(6)} checked={payAmount === calculatePayAmount(6)} onChange={handlePayChange} />
               <span className="checkmark checkmark--sum">{`${calculatePayAmount(6)}€`}</span>
             </label>
             <label className="card__option">
-              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(8)} checked={insuranceAmount === calculatePayAmount(8)} onChange={handleInsuranceChange} />
+              <input disabled={!serviceProvider} className="card__input" type="radio" name="sum2" value={calculatePayAmount(8)} checked={payAmount === calculatePayAmount(8)} onChange={handlePayChange} />
               <span className="checkmark checkmark--sum">{`${calculatePayAmount(8)}€`}</span>
             </label>
           </div>
@@ -180,6 +181,9 @@ function App() {
   return (
     <div className={className}>
       <div className="container">
+        <div className="logo__wrapper">
+          <img className="logo" alt="logo" src={Logo} />
+        </div>
         <div className="card">
           <div className="card__product-options tabs">
             <label className="card__product-option">
@@ -218,8 +222,8 @@ function App() {
         >
         <button className="modal__button" onClick={closeModal}><FaTimes /></button>
         <h2>Scan or click QRcode</h2>
-          <a href={`byteball-tn:UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH?amount=${payAmount}&base64data=${base64data}`}>
-            <QRCode size={200} value={`byteball-tn:UY4GVQ3H5DCI3QY7YJDHFAPULO3TDKYH?amount=${payAmount}&base64data=${base64data}`} />
+          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate)}&base64data=${base64data}`}>
+            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate)}&base64data=${base64data}`} />
           </a>
       </Modal>
     </div>
