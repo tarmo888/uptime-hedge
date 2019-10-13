@@ -292,6 +292,7 @@ eventBus.once('headless_wallet_ready', () => {
 	});
 	eventBus.on('paired', parseText);
 	eventBus.on('text', parseText);
+	app.listen(conf.webPort);
 
 });
 
