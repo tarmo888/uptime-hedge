@@ -88,12 +88,12 @@ function App() {
           <h3 className="card__title">I want to insure my server on</h3>
           <div className="card__product-options">
             <label className="card__product-option">
-              <input className="card__input" type="radio" name="product" value="aws" checked={serviceProvider === 'aws'} onChange={handleOptionChange} />
+              <input className="card__input" type="radio" name="product" value="AWS" checked={serviceProvider === 'AWS'} onChange={handleOptionChange} />
               <span className="checkmark"><AWS className="icon" /> <span>AWS</span></span>
             </label>
             <label className="card__product-option">
-              <input className="card__input" type="radio" name="product" value="google" checked={serviceProvider === 'google'} onChange={handleOptionChange} />
-              <span className="checkmark"><img className="icon icon--google" src={Google} alt="google" /> <span>Google</span></span>
+              <input className="card__input" type="radio" name="product" value="googleCloud" checked={serviceProvider === 'googleCloud'} onChange={handleOptionChange} />
+              <span className="checkmark"><img className="icon icon--google" src={Google} alt="googleCloud" /> <span>Google Cloud</span></span>
             </label>
             <label className="card__product-option">
               <input className="card__input" type="radio" name="product" value="azure" checked={serviceProvider === 'azure'} onChange={handleOptionChange} />
@@ -101,7 +101,7 @@ function App() {
             </label>
             <label className="card__product-option">
               <input className="card__input" type="radio" name="product" value="zone" checked={serviceProvider === 'zone'} onChange={handleOptionChange} />
-              <span className="checkmark"><img src={Zone} alt="Zone" className="icon icon--zone" /> <span>Zone</span></span>
+              <span className="checkmark"><img src={Zone} alt="zone" className="icon icon--zone" /> <span>Zone</span></span>
             </label>
           </div>
         </div>
