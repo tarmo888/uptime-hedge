@@ -40,7 +40,7 @@ function App() {
   }
 
   useEffect(() => {
-    axios.get(`https://cors-anywhere.herokuapp.com/https://bb-odds.herokuapp.com/api/rates`).then(res => {
+    axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
       setRate(res.data.data.GBYTE_USD * 1000000);
     });
   }, []);
