@@ -14,30 +14,6 @@ export default class TakerView extends React.Component {
             items: [{
                 responseTimestamp: '1570969315',
 				serviceProvider: 'Google Cloud',
-				insuranceAmount: '3000000',
-				payAmount: '100000000',
-				willCrash: 0
-            },{
-                responseTimestamp: '1570969315',
-				serviceProvider: 'Google Cloud',
-				insuranceAmount: '3000000',
-				payAmount: '100000000',
-				willCrash: 0
-            },{
-                responseTimestamp: '1570969315',
-				serviceProvider: 'Google Cloud',
-				insuranceAmount: '3000000',
-				payAmount: '100000000',
-				willCrash: 0
-            },{
-                responseTimestamp: '1570969315',
-				serviceProvider: 'Google Cloud',
-				insuranceAmount: '3000000',
-				payAmount: '100000000',
-				willCrash: 0
-            },{
-                responseTimestamp: '1570969315',
-				serviceProvider: 'Google Cloud',
 				insuranceAmount: '2000000000',
 				payAmount: '1000000000',
 				willCrash: 0
@@ -48,9 +24,11 @@ export default class TakerView extends React.Component {
             this.setState({ currencyRate: res.data.data.GBYTE_USD});
           });
         axios.get(`http://uptimehedge.com//api-offers`).then(res => {
-            this.setState({ 
-                items: res.data
-            })
+            if (res && res.data) {
+                this.setState({ 
+                    items: res.data
+                })
+            }
             console.log(this.state.items)
         });
     }
