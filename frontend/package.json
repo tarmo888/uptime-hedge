@@ -13,7 +13,8 @@
     "react-icons": "^3.7.0",
     "react-modal": "^3.10.1",
     "react-scripts": "3.2.0",
-    "react-select": "^3.0.8"
+    "react-select": "^3.0.8",
+    "smoothscroll-polyfill": "^0.4.4"
   },
   "scripts": {
     "start": "react-scripts start",
