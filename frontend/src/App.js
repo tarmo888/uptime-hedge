@@ -10,11 +10,8 @@ import classNames from 'classnames';
 import QRCode from 'qrcode.react';
 import Modal from 'react-modal';
 import {FaTimes} from 'react-icons/fa';
-import smoothscroll from 'smoothscroll-polyfill';
-
-if (process.browser) {
-  smoothscroll.polyfill();
-}
+import Insure from './assets/insure.png';
+import Invest from './assets/invest.png';
 
 function App() {
   const [payAmount, setPayAmount] = useState(null);
@@ -23,7 +20,8 @@ function App() {
   const [base64data, setBase64Data] = useState(null);
   const [serviceProvider, setServiceProvider] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [isChoiceMade, setIsChoiceMade] = useState(false);
+  const [selectedChoice, setSelectedChoice] = useState('insure');
+  const [choiceMade, setChoiceMade] = useState(false);
 
   const getBase64Data = () => {
     const data = {
@@ -75,27 +73,18 @@ function App() {
   }
 
   const onChoiceModalOptionClick = (choice) => {
-    setIsChoiceMade(choice);
-
-    if (choice === 'invest') {
-      scrollDown();
-    }
+    setSelectedChoice(choice);
+    setChoiceMade(true);
   }
 
-  const scrollDown = () => {
-    window.scroll({ top: 200, left: 0, behavior: 'smooth' });
-  };
+  const handleTabsChange = (changeEvent) => {
+    setSelectedChoice(changeEvent.target.value);
+  }
 
-  const className = classNames('App',
-    {
-      'item-is-selected': serviceProvider !== null
-    }
-  );
-
-  return (
-    <div className={className}>
-      <div className="container">
-        <div className="card">
+  const renderInsureContent = () => {
+    return (
+      <>
+      <div className="card">
           <h3 className="card__title">I want to insure my server on</h3>
           <div className="card__product-options">
             <label className="card__product-option">
@@ -169,19 +158,62 @@ function App() {
         <div className="button-wrapper">
           <button onClick={openModal} className="button"><span role="img" aria-label="hedge">🦔</span> Hedge it</button>
         </div>
+        </>
+    )
+  }
+
+  const renderInvestContent = () => {
+    return (
+      <div className="card">
+        Here be da invest table
+      </div>
+    )
+  }
+
+  const className = classNames('App',
+    {
+      'item-is-selected': serviceProvider !== null
+    }
+  );
+
+  return (
+    <div className={className}>
+      <div className="container">
+        <div className="card">
+          <div className="card__product-options tabs">
+            <label className="card__product-option">
+              <input className="card__input" type="radio" name="tabs" value="insure" checked={selectedChoice === 'insure'} onChange={handleTabsChange} />
+              <span className="checkmark">Insure</span>
+            </label>
+            <label className="card__product-option">
+              <input className="card__input" type="radio" name="tabs" value="invest" checked={selectedChoice === 'invest'} onChange={handleTabsChange} />
+              <span className="checkmark">Invest</span>
+            </label>
+          </div>
+        </div>
+        {selectedChoice === 'insure' && renderInsureContent()}
+        {selectedChoice === 'invest' && renderInvestContent()}
       </div>
       <Modal
-          isOpen={!isChoiceMade}
+          isOpen={!choiceMade}
           className="choice-modal-wrapper"
+          ariaHideApp={false}
         >
           <div className="choice-modal">
-          <button onClick={onChoiceModalOptionClick.bind(null, 'insure')} className="button">Insure</button>
-          <button onClick={onChoiceModalOptionClick.bind(null, 'invest')} className="button">Invest</button>
+            <div className="choice-modal__choice">
+              <button className="choice__button choice__button--insure" onClick={onChoiceModalOptionClick.bind(null, 'insure')}>
+              <img className="choice-img" src={Insure} alt="insure" />Insure</button>
+            </div>
+            <div className="choice-modal__choice">
+              <button className="choice__button choice__button--invest" onClick={onChoiceModalOptionClick.bind(null, 'invest')}>
+              <img className="choice-img" src={Invest} alt="invest" />Invest</button>
+          </div>
         </div>
       </Modal>
       <Modal
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
+          ariaHideApp={false}
         >
         <button className="modal__button" onClick={closeModal}><FaTimes /></button>
         <h2>Scan or click QRcode</h2>
