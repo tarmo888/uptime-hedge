@@ -28,8 +28,8 @@ function App() {
   const getBase64Data = () => {
     const data = {
       serviceProvider: serviceProvider,
-      insuranceAmount: Math.floor(insuranceAmount * rate),
-      payAmount: Math.floor(payAmount * rate),
+      insuranceAmount: Math.floor(insuranceAmount * rate * 1000000000),
+      payAmount: Math.floor(payAmount * rate * 1000000000),
       willCrash: 1,
     };
 
@@ -42,7 +42,7 @@ function App() {
 
   useEffect(() => {
     axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
-      setRate(res.data.data.GBYTE_USD * 1000000);
+      setRate(res.data.data.GBYTE_USD * 1000000000);
     });
   }, []);
 
@@ -222,8 +222,8 @@ function App() {
         >
         <button className="modal__button" onClick={closeModal}><FaTimes /></button>
         <h2>Scan or click QRcode</h2>
-          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate)}&base64data=${base64data}`}>
-            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate)}&base64data=${base64data}`} />
+          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate * 1000000000)}&base64data=${base64data}`}>
+            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate * 1000000000)}&base64data=${base64data}`} />
           </a>
       </Modal>
     </div>
