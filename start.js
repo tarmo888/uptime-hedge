@@ -255,6 +255,9 @@ async function parseText(from_address, text) {
 eventBus.once('headless_wallet_ready', () => {
 	walletGeneral.addWatchedAddress(conf.aaAddress, () => {
 		eventBus.on('aa_response_from_aa-' + conf.aaAddress, objAAResponse => {
+			if (!Object.keys(objAAResponse.response).length) {
+				return;
+			}
 			//Dummy data
 			// const response = {
 			// 	responseTimestamp: '1570969315',
@@ -262,19 +265,15 @@ eventBus.once('headless_wallet_ready', () => {
 			// 	insuranceAmount: '3000000',
 			// 	payAmount: '100000000',
 			// 	willCrash: 0
-
 			// }
 			let response = {
-				responseTimestamp: objAAResponse.objaobjResponseUnit.timestamp,
-				serviceProvider: objaobjResponseUnit.response.serviceProvider,
-				insuranceAmount: objaobjResponseUnit.response.insuranceAmount,
-				payAmount: objaobjResponseUnit.response.payAmount,
-				willCrash: objaobjResponseUnit.response.willCrash
+				responseTimestamp: moment.utc().unix(),
+				serviceProvider: objAAResponse.response.serviceProvider,
+				insuranceAmount: objAAResponse.response.insuranceAmount,
+				payAmount: objAAResponse.response.payAmount,
+				willCrash: objAAResponse.response.willCrash
 			}
 			responseModified.push(response);
-
-			return
-
 		});
 	});
 	headlessWallet.setupChatEventHandlers();
