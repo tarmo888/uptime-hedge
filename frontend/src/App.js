@@ -18,6 +18,7 @@ import Logo from './assets/logo.png';
 function App() {
   const [payAmount, setPayAmount] = useState(null);
   const [insuranceAmount, setInsuranceAmount] = useState(null);
+  const [botLink, setBotLink] = useState(null);
   const [rate, setRate] = useState(null);
   const [base64data, setBase64Data] = useState(null);
   const [serviceProvider, setServiceProvider] = useState(null);
@@ -30,8 +31,8 @@ function App() {
   const getBase64Data = () => {
     const data = {
       serviceProvider: serviceProvider,
-      insuranceAmount: Math.floor(insuranceAmount * rate * 1000000000),
-      payAmount: Math.floor(payAmount * rate * 1000000000),
+      insuranceAmount: Math.floor(insuranceAmount / rate * 1000000000),
+      payAmount: Math.floor(payAmount / rate * 1000000000),
       willCrash: 1,
     };
 
@@ -44,6 +45,7 @@ function App() {
 
   useEffect(() => {
     axios.get(`http://uptimehedge.com/api-currencies`).then(res => {
+      setBotLink(res.data.bot);
       setRate(res.data.data.GBYTE_USD);
     });
     const interval = setInterval(() => {
@@ -198,7 +200,7 @@ function App() {
     <div className={className}>
       <div className="container">
         <div className="logo__wrapper">
-          <img className="logo" alt="logo" src={Logo} />
+          <a href={botLink}><img className="logo" alt="logo" src={Logo} /></a>
         </div>
         <div className="card">
           <div className="card__product-options tabs">
@@ -238,8 +240,8 @@ function App() {
         >
         <button className="modal__button" onClick={closeModal}><FaTimes /></button>
         <h2>Scan or click QRcode</h2>
-          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate * 1000000000)}&base64data=${base64data}`}>
-            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount * rate * 1000000000)}&base64data=${base64data}`} />
+          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`}>
+            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`} />
           </a>
       </Modal>
     </div>

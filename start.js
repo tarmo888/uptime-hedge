@@ -50,10 +50,15 @@ render(app, {
 
 
 async function sendOffer(ctx) {
-	ctx.body = {data:responseModified}
+	ctx.body = {
+		data: responseModified
+	}
 }
 async function sendRates(ctx) {
-	ctx.body = {data:exchangeRates}
+	ctx.body = {
+		bot: pairingProtocol + device.getMyDevicePubKey()+"@"+conf.hub+"#"+conf.permanent_pairing_secret,
+		data: exchangeRates
+	}
 }
 
 app.use(serve(__dirname + '/public'));
@@ -165,15 +170,15 @@ async function parseText(from_address, text) {
 			device.sendMessageToDevice(from_address, 'text', 'Please provide your private email [...](profile-request:email) or sign this message with single-address wallet, which has publicly attested email address [...](sign-message-request:'+ challenge_email +').\nIf you haven\'t verified your email address yet then please do it with Email Attestation bot from Bot Store.\n[I want to offer bet](command:offer bet)');
 		} else if (text == 'offer bet') {
 			betAction[from_address] = 'offer';
-			device.sendMessageToDevice(from_address, 'text', 'I want to insure my server on: \n [Amazon Web Services](command:serviceProvider/aws) \n [Google Cloud](command:serviceProvider/google) \n [Azure](command:serviceProvider/azure) \n [Zone](command:serviceProvider/zone) \n');
+			device.sendMessageToDevice(from_address, 'text', 'I want to insure my server on: \n [Amazon Web Services](command:serviceProvider/AWS) \n [Google Cloud](command:serviceProvider/googleCloud) \n [Azure](command:serviceProvider/azure) \n [Zone](command:serviceProvider/zone) \n');
 		} else if (text == 'take bet') {
 			betAction[from_address] = 'take';
 
 			let response = {
-				responseTimestamp: '13.10.2019 15:21:55',
-				serviceProvider: 'Google Cloud',
-				insuranceAmount: 37.930257032192,
-				payAmount: 18.965128516096,
+				responseTimestamp: 1571943337,
+				serviceProvider: 'googleCloud',
+				insuranceAmount: 903761291,
+				payAmount: 677820968,
 				willCrash: 1
 			}
 			responseModified.push(response);
@@ -184,7 +189,9 @@ async function parseText(from_address, text) {
 				let rate = exchangeRates.GBYTE_USD;
 
 				responseModified.forEach(function callback(offer, index) {
-					message += `[${offer.serviceProvider} - ${offer.insuranceAmount} (Pay this much: ${offer.payAmount})](command:take/${index}) \n`;
+					let insuranceAmount = Math.round(offer.insuranceAmount / 1000000000 * rate * 100)/100;
+					let payAmount = Math.round((offer.insuranceAmount - offer.payAmount) / 1000000000 * rate * 100)/100;
+					message += `${offer.serviceProvider} - ${insuranceAmount}€ [(Pay this much: ${payAmount}€)](command:take/${index}) \n`;
 				});
 
 				device.sendMessageToDevice(from_address, 'text', message);
@@ -214,14 +221,14 @@ async function parseText(from_address, text) {
 
 						const data = {
 							serviceProvider: serviceProvider[from_address],
-							insuranceAmount: Math.floor(insuranceAmount[from_address] * rate),
-							payAmount: Math.floor(payAmount * rate),
+							insuranceAmount: Math.floor(insuranceAmount[from_address] / rate * 1000000000),
+							payAmount: Math.floor(payAmount / rate * 1000000000),
 							willCrash: 1,
 						};
 
 						const json_string = JSON.stringify(data);
 
-						device.sendMessageToDevice(from_address, 'text', `[Hedge it](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
+						device.sendMessageToDevice(from_address, 'text', `Hedge it [...](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
 						device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 
 						delete betAction[from_address];
@@ -238,12 +245,12 @@ async function parseText(from_address, text) {
 			let offer = responseModified[index]
 			const data = {
 				serviceProvider: offer.serviceProvider,
-				insuranceAmount: Math.floor((offer.insuranceAmount)* rate),
-				payAmount: Math.floor((offer.insuranceAmount - offer.payAmount)* rate),
+				insuranceAmount: offer.insuranceAmount,
+				payAmount: offer.insuranceAmount - offer.payAmount,
 				willCrash: Number(!offer.willCrash),
 			};
 			const json_string = JSON.stringify(data);
-			device.sendMessageToDevice(from_address, 'text', `[Take offer](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
+			device.sendMessageToDevice(from_address, 'text', `Take offer [...](byteball:${conf.aaAddress}?amount=${data.payAmount}&base64data=${base64url(json_string)})`);
 			device.sendMessageToDevice(from_address, 'text', 'Choose an action: \n [Insure](command:offer bet) \n [Invest](command:take bet)');
 			delete betAction[from_address];
 		} else {
@@ -267,7 +274,7 @@ eventBus.once('headless_wallet_ready', () => {
 			// 	willCrash: 0
 			// }
 			let response = {
-				responseTimestamp: moment.utc().unix(),
+				responseTimestamp: objAAResponse.response.responseTimestamp ? objAAResponse.response.responseTimestamp : moment.utc().unix(),
 				serviceProvider: objAAResponse.response.serviceProvider,
 				insuranceAmount: objAAResponse.response.insuranceAmount,
 				payAmount: objAAResponse.response.payAmount,
