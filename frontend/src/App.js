@@ -240,8 +240,8 @@ function App() {
         >
         <button className="modal__button" onClick={closeModal}><FaTimes /></button>
         <h2>Scan or click QRcode</h2>
-          <a href={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`}>
-            <QRCode size={200} value={`byteball-tn:24YOJ7AFWKKFZPK7MLJ3BHCPBNYGFIIG?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`} />
+          <a href={`byteball-tn:VQIEWEQJS6EOJ6ZVXAEBEDA2SQF2Z6UK?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`}>
+            <QRCode size={200} value={`byteball-tn:VQIEWEQJS6EOJ6ZVXAEBEDA2SQF2Z6UK?amount=${Math.floor(payAmount / rate * 1000000000)}&base64data=${base64data}`} />
           </a>
       </Modal>
     </div>
